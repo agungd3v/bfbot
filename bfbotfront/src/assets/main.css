@@ -1,1 +1,9 @@
 @import './base.css';
+
+.text-sm {
+    font-size: 0.7rem;
+}
+
+.vertical-top {
+    vertical-align: top;
+}

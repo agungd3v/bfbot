@@ -1,6 +1,6 @@
 require('dotenv/config')
 const app = require('express')();
-const http = require('http').Server(app);
+const http = require('http').Server(app)
 const io = require('socket.io')(http, {
     cors: {
         origin: '*',
@@ -8,13 +8,17 @@ const io = require('socket.io')(http, {
     }
 })
 
-app.get('/', function(req, res) {
-    res.status(200).json({status: true})
-})
+const rts = require('./routes')
+
+app.use('/', rts)
 
 io.on('connection', function(socket) {
-    const buff = require('./services/wss/aggregate')
-    buff.aggregate('btcusdt', socket)
+    _a = require('./services/wss/aggregate')
+    _b = require('./services/wss/markprice')
+    _c = require('./services/wss/balanceposition')
+    _a.aggregate('btcusdt', socket)
+    _b.markPrice('btcusdt', socket)
+    _c.balancePosition('zsmGSrxapRRu3d5LDteSQ6WCNeeAhxBoLxAqY5VKnM4rVwYUzHSfTVqahtNolCRo', socket)
 })
 
 http.listen(process.env.APP_PORT || 3000, function() {

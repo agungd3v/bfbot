@@ -23,8 +23,8 @@ io.on('connection', function(socket) {
     _b.markPrice('btcusdt', socket)
     // _c.balancePosition('zsmGSrxapRRu3d5LDteSQ6WCNeeAhxBoLxAqY5VKnM4rVwYUzHSfTVqahtNolCRo', socket)
 })
-// _a = require('./services/wss/aggregate')
-// _a.aggregate('btcusdt', null)
+_a = require('./services/wss/aggregate')
+_a.aggregate('btcusdt', null)
 
 http.listen(process.env.APP_PORT || 3000, function() {
    console.log('listening on *:3000')

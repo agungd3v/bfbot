@@ -7,6 +7,7 @@ const createSignature = (symbol) => {
 
 const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) => {
     _time = new Date().getTime()
+    // Calculate TP/SL
     if (position == 'BUY') {
         _stopPriceTP = ((parseFloat(priceMark) / 100) * 0.5) + parseFloat(priceMark)
         _stopPriceSL = parseFloat(priceMark) - ((parseFloat(priceMark) / 100) * 0.5)
@@ -46,7 +47,6 @@ const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) =>
     }
     // Generate query
     _paramOrder = [_o, _tp, _sl]
-    console.log(_paramOrder)
     _stringQuery = 'batchOrders=' + encodeURIComponent(JSON.stringify(_paramOrder)) + '&timestamp=' + _time
     // _signature
     _signature = crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(_stringQuery).digest('hex')

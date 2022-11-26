@@ -8,6 +8,9 @@ const io = require('socket.io')(http, {
     }
 })
 
+app.use(require('cors')())
+app.use(require('body-parser').json())
+
 const rts = require('./routes')
 
 app.use('/', rts)
@@ -18,8 +21,10 @@ io.on('connection', function(socket) {
     _c = require('./services/wss/balanceposition')
     _a.aggregate('btcusdt', socket)
     _b.markPrice('btcusdt', socket)
-    _c.balancePosition('zsmGSrxapRRu3d5LDteSQ6WCNeeAhxBoLxAqY5VKnM4rVwYUzHSfTVqahtNolCRo', socket)
+    // _c.balancePosition('zsmGSrxapRRu3d5LDteSQ6WCNeeAhxBoLxAqY5VKnM4rVwYUzHSfTVqahtNolCRo', socket)
 })
+// _a = require('./services/wss/aggregate')
+// _a.aggregate('btcusdt', null)
 
 http.listen(process.env.APP_PORT || 3000, function() {
    console.log('listening on *:3000')

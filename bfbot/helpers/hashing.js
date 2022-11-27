@@ -9,11 +9,11 @@ const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) =>
     _time = new Date().getTime()
     // Calculate TP/SL
     if (position == 'BUY') {
-        _stopPriceTP = ((parseFloat(priceMark) / 100) * 0.5) + parseFloat(priceMark)
+        _stopPriceTP = ((parseFloat(priceMark) / 100) * 1.5) + parseFloat(priceMark)
         _stopPriceSL = parseFloat(priceMark) - ((parseFloat(priceMark) / 100) * 0.5)
     }
     if (position == 'SELL') {
-        _stopPriceTP = parseFloat(priceMark) - ((parseFloat(priceMark) / 100) * 0.5)
+        _stopPriceTP = parseFloat(priceMark) - ((parseFloat(priceMark) / 100) * 1.5)
         _stopPriceSL = ((parseFloat(priceMark) / 100) * 0.5) + parseFloat(priceMark)
     }
     // Order
@@ -23,7 +23,7 @@ const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) =>
         type: 'LIMIT',
         timeInForce: 'GTC',
         quantity: quantity,
-        price: priceMark
+        price: priceMark.toFixed(1)
     }
     // Stop Loss
     _sl = {
@@ -38,7 +38,7 @@ const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) =>
     // Take Profit
     _tp = {
         symbol: symbol,
-        side: position,
+        side: position == 'BUY' ? 'SELL' : 'BUY',
         type: 'TAKE_PROFIT_MARKET',
         quantity: quantity,
         stopPrice: _stopPriceTP.toFixed(decimal),
@@ -47,6 +47,7 @@ const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) =>
     }
     // Generate query
     _paramOrder = [_o, _tp, _sl]
+    console.log(_paramOrder)
     _stringQuery = 'batchOrders=' + encodeURIComponent(JSON.stringify(_paramOrder)) + '&timestamp=' + _time
     // _signature
     _signature = crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(_stringQuery).digest('hex')

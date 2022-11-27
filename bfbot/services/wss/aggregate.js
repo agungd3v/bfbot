@@ -8,19 +8,16 @@ const newOrder = async (params) => {
         if (_gi) {
             _gimc = 0
             if (params.side == 'BUY') {
-                if (parseFloat(_gi.markPrice).toFixed(2) < parseFloat(params.price)) {
-                    _gimc = parseFloat(params.price) + ((parseFloat(_gi.markPrice).toFixed(2) / 100) * 0.5)
-                }
+                _gimc = parseFloat(_gi.markPrice) - ((parseFloat(_gi.markPrice) / 100) * 0.5)
             }
             if (params.side == 'SELL') {
-                if (parseFloat(_gi.markPrice).toFixed(2) < parseFloat(params.price)) {
-                    _gimc = parseFloat(params.price) - ((parseFloat(_gi.markPrice).toFixed(2) / 100) * 0.5)
-                }
+                _gimc = parseFloat(_gi.markPrice) + ((parseFloat(_gi.markPrice) / 100) * 0.5)
             }
-            _cso = createSignatureOrder(params.pair, params.side, '1.00', _gimc, 2)
+            _cso = createSignatureOrder(params.pair, params.side, '1.00', _gimc)
             _h = await http.post('/v1/batchOrders?' + _cso.query + '&signature=' + _cso.signature)
             if (_h) {
                 console.log('New Order Created!')
+                console.log(_h)
             }
         }
     } catch (error) {

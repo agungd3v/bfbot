@@ -5,49 +5,52 @@ const createSignature = (symbol) => {
     return crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(queryString).digest('hex')
 }
 
-const createSignatureOrder = (symbol, position, quantity, priceMark, decimal) => {
+const createSignatureOrder = (symbol, position, quantity, priceMark) => {
     _time = new Date().getTime()
     // Calculate TP/SL
     if (position == 'BUY') {
-        _stopPriceTP = ((parseFloat(priceMark) / 100) * 1.5) + parseFloat(priceMark)
-        _stopPriceSL = parseFloat(priceMark) - ((parseFloat(priceMark) / 100) * 0.5)
+        _mark = Math.round(priceMark).toFixed(2)
+        _stopPriceTP = ((parseFloat(_mark) / 100) * 2.51) + parseFloat(_mark)
+        _stopPriceSL = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.01)
     }
     if (position == 'SELL') {
-        _stopPriceTP = parseFloat(priceMark) - ((parseFloat(priceMark) / 100) * 1.5)
-        _stopPriceSL = ((parseFloat(priceMark) / 100) * 0.5) + parseFloat(priceMark)
+        _mark = Math.floor(priceMark).toFixed(2)
+        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 2.51)
+        _stopPriceSL = ((parseFloat(_mark) / 100) * 1.01) + parseFloat(_mark)
     }
     // Order
     _o = {
+        type: 'LIMIT',
         symbol: symbol,
         side: position,
-        type: 'LIMIT',
-        timeInForce: 'GTC',
         quantity: quantity,
-        price: priceMark.toFixed(1)
+        price: _mark,
+        timeInForce: 'GTC',
+        workingType: 'MARK_PRICE'
     }
     // Stop Loss
     _sl = {
+        type: 'STOP_MARKET',
         symbol: symbol,
         side: position == 'BUY' ? 'SELL' : 'BUY',
-        type: 'STOP_MARKET',
         quantity: quantity,
-        stopPrice: _stopPriceSL.toFixed(decimal),
+        stopPrice: _stopPriceSL.toFixed(2),
         workingType: 'MARK_PRICE',
-        reduceOnly: 'true'
+        closePosition: 'true'
     }
     // Take Profit
     _tp = {
+        type: 'TAKE_PROFIT_MARKET',
         symbol: symbol,
         side: position == 'BUY' ? 'SELL' : 'BUY',
-        type: 'TAKE_PROFIT_MARKET',
         quantity: quantity,
-        stopPrice: _stopPriceTP.toFixed(decimal),
+        stopPrice: _stopPriceTP.toFixed(2),
         workingType: 'MARK_PRICE',
-        reduceOnly: 'true'
+        closePosition: 'true'
     }
     // Generate query
-    _paramOrder = [_o, _tp, _sl]
-    console.log(_paramOrder)
+    console.log(_mark)
+    _paramOrder = [_sl, _tp, _o]
     _stringQuery = 'batchOrders=' + encodeURIComponent(JSON.stringify(_paramOrder)) + '&timestamp=' + _time
     // _signature
     _signature = crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(_stringQuery).digest('hex')

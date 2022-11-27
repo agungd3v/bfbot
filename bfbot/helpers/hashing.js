@@ -9,12 +9,12 @@ const createSignatureOrder = (symbol, position, quantity, priceMark) => {
     _time = new Date().getTime()
     // Calculate TP/SL
     if (position == 'BUY') {
-        _mark = Math.round(priceMark).toFixed(2)
+        _mark = Math.floor(priceMark).toFixed(2)
         _stopPriceTP = ((parseFloat(_mark) / 100) * 2.51) + parseFloat(_mark)
         _stopPriceSL = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.01)
     }
     if (position == 'SELL') {
-        _mark = Math.floor(priceMark).toFixed(2)
+        _mark = Math.round(priceMark).toFixed(2)
         _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 2.51)
         _stopPriceSL = ((parseFloat(_mark) / 100) * 1.01) + parseFloat(_mark)
     }
@@ -49,7 +49,6 @@ const createSignatureOrder = (symbol, position, quantity, priceMark) => {
         closePosition: 'true'
     }
     // Generate query
-    console.log(_mark)
     _paramOrder = [_sl, _tp, _o]
     _stringQuery = 'batchOrders=' + encodeURIComponent(JSON.stringify(_paramOrder)) + '&timestamp=' + _time
     // _signature

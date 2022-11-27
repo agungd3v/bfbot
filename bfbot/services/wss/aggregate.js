@@ -8,10 +8,10 @@ const newOrder = async (params) => {
         if (_gi) {
             _gimc = 0
             if (params.side == 'BUY') {
-                _gimc = parseFloat(_gi.markPrice) - ((parseFloat(_gi.markPrice) / 100) * 0.5)
+                _gimc = params.price - ((Math.floor(_gi.markPrice) / 100) * 0.5)
             }
             if (params.side == 'SELL') {
-                _gimc = parseFloat(_gi.markPrice) + ((parseFloat(_gi.markPrice) / 100) * 0.5)
+                _gimc = params.price + ((Math.round(_gi.markPrice) / 100) * 0.5)
             }
             _cso = createSignatureOrder(params.pair, params.side, '1.00', _gimc)
             _h = await http.post('/v1/batchOrders?' + _cso.query + '&signature=' + _cso.signature)
@@ -40,19 +40,20 @@ module.exports = {
                 // socket.emit('aggregate', json)
                 json.m ? _buy.push(parseFloat(json.p)) : _sell.push(parseFloat(json.p))
                 if (_buy.length >= 10 || _sell.length >= 10) {
+                    ws.close()
                     if (_buy.length > _sell.length) {
                         _biggest = Math.max(..._buy)
                         _average = _buy.reduce((x, y) => x + y, 0) / _buy.length
                         _final = _biggest + (_biggest - _average)
-                        _deal = {..._deal, ...{side: 'BUY', price: _final.toFixed(2)}}
+                        _deal = {..._deal, ...{side: 'BUY', price: Math.round(_final)}}
                     }
                     if (_buy.length < _sell.length) {
                         _smallest = Math.min(..._sell)
                         _average = _sell.reduce((x, y) => x + y, 0) / _sell.length
                         _final = _smallest - (_average - _smallest)
-                        _deal = {..._deal, ...{side: 'SELL', price: _final.toFixed(2)}}
+                        _deal = {..._deal, ...{side: 'SELL', price: Math.floor(_final)}}
                     }
-                    ws.close()
+
                     return newOrder(_deal)
                 }
             }

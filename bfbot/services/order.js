@@ -26,20 +26,20 @@ const newOrder = async (params) => {
 
 module.exports = {
     preOrder: (pair, socket) => {
-        const symbol = pair
-        const ws = new WebSocket(`${process.env.BINANCE_SOCKET}/${symbol}@aggTrade`)
+        _symbol = pair
+        _wss = new WebSocket(`${process.env.BINANCE_SOCKET}/${_symbol}@aggTrade`)
 
         _buy = []
         _sell = []
-        _deal = {pair: symbol.toUpperCase()}
+        _deal = {pair: _symbol.toUpperCase()}
 
-        ws.on('message', (data) => {
+        _wss.on('message', (data) => {
             if (data) {
-                let json = JSON.parse(data)
+                _json = JSON.parse(data)
                 // socket.emit('aggregate', json)
-                json.m ? _buy.push(parseFloat(json.p)) : _sell.push(parseFloat(json.p))
+                _json.m ? _buy.push(parseFloat(_json.p)) : _sell.push(parseFloat(_json.p))
                 if (_buy.length >= 10 || _sell.length >= 10) {
-                    ws.close()
+                    _wss.close()
                     if (_buy.length > _sell.length) {
                         _biggest = Math.max(..._buy)
                         _average = _buy.reduce((x, y) => x + y, 0) / _buy.length

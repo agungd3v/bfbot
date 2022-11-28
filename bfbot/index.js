@@ -16,15 +16,10 @@ const rts = require('./routes')
 app.use('/', rts)
 
 io.on('connection', function(socket) {
-    _a = require('./services/wss/aggregate')
-    _b = require('./services/wss/markprice')
-    _c = require('./services/wss/balanceposition')
-    _a.aggregate('btcusdt', socket)
-    _b.markPrice('btcusdt', socket)
-    // _c.balancePosition('zsmGSrxapRRu3d5LDteSQ6WCNeeAhxBoLxAqY5VKnM4rVwYUzHSfTVqahtNolCRo', socket)
+    // user connection here
 })
-_a = require('./services/wss/aggregate')
-_a.aggregate('btcusdt', null)
+_a = require('./services/order')
+_a.preOrder('btcusdt', null)
 
 http.listen(process.env.APP_PORT || 3000, function() {
    console.log('listening on *:3000')

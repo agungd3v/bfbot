@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
-const http = require('../../plugins/http')
-const { createSignatureOrder } = require('../../helpers/hashing')
+const http = require('../plugins/http')
+const { createSignatureOrder } = require('../helpers/hashing')
 
 const newOrder = async (params) => {
     try {
@@ -17,7 +17,6 @@ const newOrder = async (params) => {
             _h = await http.post('/v1/batchOrders?' + _cso.query + '&signature=' + _cso.signature)
             if (_h) {
                 console.log('New Order Created!')
-                console.log(_h)
             }
         }
     } catch (error) {
@@ -26,7 +25,7 @@ const newOrder = async (params) => {
 }
 
 module.exports = {
-    aggregate: (pair, socket) => {
+    preOrder: (pair, socket) => {
         const symbol = pair
         const ws = new WebSocket(`${process.env.BINANCE_SOCKET}/${symbol}@aggTrade`)
 

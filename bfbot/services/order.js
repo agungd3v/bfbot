@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
 const http = require('../plugins/http')
-const { createSignatureOrder } = require('../helpers/hashing')
+const { signatureOrder, signatureCancelOrders } = require('../helpers/hashing')
 
 const newOrder = async (params) => {
     try {
@@ -13,7 +13,7 @@ const newOrder = async (params) => {
             if (params.side == 'SELL') {
                 _gimc = params.price + ((Math.round(_gi.markPrice) / 100) * 0.5)
             }
-            _cso = createSignatureOrder(params.pair, params.side, '1.00', _gimc)
+            _cso = signatureOrder(params.pair, params.side, '1.00', _gimc)
             _h = await http.post('/v1/batchOrders?' + _cso.query + '&signature=' + _cso.signature)
             if (_h) {
                 console.log('New Order Created!')
@@ -24,22 +24,33 @@ const newOrder = async (params) => {
     }
 }
 
-module.exports = {
-    preOrder: (pair, socket) => {
-        _symbol = pair
-        _wss = new WebSocket(`${process.env.BINANCE_SOCKET}/${_symbol}@aggTrade`)
+const cancelOrders = async (pair) => {
+    try {
+        _sco = signatureCancelOrders(pair)
+        _http = await http.delete('/v1/allOpenOrders?' + _sco.query + '&signature=' + _sco.signature)
+        if (_http) return _http
+    } catch (error) {
+        console.log(error)
+    }
+}
 
+module.exports = {
+    preOrder: async (pair, socket) => {
+        // Pair coin to usdt
+        _symbol = pair
+        // Connect socket market trade @aggTrade
+        _wss = new WebSocket(`${process.env.BINANCE_SOCKET}/${_symbol}@aggTrade`)
+        // Default variable buy, sell, deal
         _buy = []
         _sell = []
         _deal = {pair: _symbol.toUpperCase()}
-
+        // Receive data from socket
         _wss.on('message', (data) => {
             if (data) {
                 _json = JSON.parse(data)
                 // socket.emit('aggregate', json)
                 _json.m ? _buy.push(parseFloat(_json.p)) : _sell.push(parseFloat(_json.p))
                 if (_buy.length >= 10 || _sell.length >= 10) {
-                    _wss.close()
                     if (_buy.length > _sell.length) {
                         _biggest = Math.max(..._buy)
                         _average = _buy.reduce((x, y) => x + y, 0) / _buy.length
@@ -52,10 +63,13 @@ module.exports = {
                         _final = _smallest - (_average - _smallest)
                         _deal = {..._deal, ...{side: 'SELL', price: Math.floor(_final)}}
                     }
-
-                    return newOrder(_deal)
+                    _wss.close()
                 }
             }
+        })
+        // Send data to order function
+        _wss.on('close', () => {
+            return newOrder(_deal)
         })
     }
 }

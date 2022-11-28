@@ -1,11 +1,14 @@
 const crypto = require('crypto')
 
-const createSignature = (symbol) => {
-    const queryString = 'timestamp=' + new Date().getTime()
-    return crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(queryString).digest('hex')
+const signatureCancelOrders = (symbol) => {
+    _queryString = 'timestamp=' + new Date().getTime() + '&symbol=' + symbol.toUpperCase()
+    return {
+        signature: crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(_queryString).digest('hex'),
+        query: _queryString
+    }
 }
 
-const createSignatureOrder = (symbol, position, quantity, priceMark) => {
+const signatureOrder = (symbol, position, quantity, priceMark) => {
     _time = new Date().getTime()
     // Calculate TP/SL
     if (position == 'BUY') {
@@ -60,17 +63,7 @@ const createSignatureOrder = (symbol, position, quantity, priceMark) => {
     }
 }
 
-const queryString = (obj) => {
-    _q = ''
-    for (const [key, value] of Object.entries(obj)) {
-        _str = `${key}=${value}`
-        _q = _q == '' ? _str : _q +`&${_str}`
-    }
-
-    return _q
-}
-
 module.exports = {
-    createSignature,
-    createSignatureOrder
+    signatureCancelOrders,
+    signatureOrder
 }

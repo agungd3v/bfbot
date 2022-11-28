@@ -10,12 +10,12 @@ const createSignatureOrder = (symbol, position, quantity, priceMark) => {
     // Calculate TP/SL
     if (position == 'BUY') {
         _mark = Math.floor(priceMark).toFixed(2)
-        _stopPriceTP = ((parseFloat(_mark) / 100) * 2.51) + parseFloat(_mark)
+        _stopPriceTP = ((parseFloat(_mark) / 100) * 1.51) + parseFloat(_mark)
         _stopPriceSL = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.01)
     }
     if (position == 'SELL') {
         _mark = Math.round(priceMark).toFixed(2)
-        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 2.51)
+        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.51)
         _stopPriceSL = ((parseFloat(_mark) / 100) * 1.01) + parseFloat(_mark)
     }
     // Order

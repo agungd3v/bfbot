@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 
-const signatureCancelOrders = (symbol) => {
+const signatureOnlySymbol = (symbol) => {
     _queryString = 'timestamp=' + new Date().getTime() + '&symbol=' + symbol.toUpperCase()
     return {
         signature: crypto.createHmac('sha256', process.env.BINANCE_SECRET_KEY).update(_queryString).digest('hex'),
@@ -64,6 +64,6 @@ const signatureOrder = (symbol, position, quantity, priceMark) => {
 }
 
 module.exports = {
-    signatureCancelOrders,
+    signatureOnlySymbol,
     signatureOrder
 }

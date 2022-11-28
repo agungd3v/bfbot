@@ -1,7 +1,8 @@
 const WebSocket = require('ws')
 const http = require('../plugins/http')
-const { signatureOrder, signatureCancelOrders } = require('../helpers/hashing')
+const { signatureOrder, signatureOnlySymbol } = require('../helpers/hashing')
 
+// for create order with take profit and stop loss
 const newOrder = async (params) => {
     try {
         _gi = await http.get('/v1/premiumIndex?symbol=' + params.pair)
@@ -24,13 +25,36 @@ const newOrder = async (params) => {
     }
 }
 
+// for cancel all orders
 const cancelOrders = async (pair) => {
     try {
-        _sco = signatureCancelOrders(pair)
+        _sco = signatureOnlySymbol(pair)
         _http = await http.delete('/v1/allOpenOrders?' + _sco.query + '&signature=' + _sco.signature)
         if (_http) return _http
     } catch (error) {
         console.log(error)
+    }
+}
+
+// for check any orders open base on value length
+const openOrders = async (pair) => {
+    try {
+        _sco = signatureOnlySymbol(pair)
+        _http = await http.get('/v1/openOrders?' + _sco.query + '&signature=' + _sco.signature)
+        if (_http) return _http
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// for check any position open base on entryPrice
+const openPosition = async (pair) => {
+    try {
+        _sco = signatureOnlySymbol(pair)
+        _http = await http.get('/v2/positionRisk?' + _sco.query + '&signature=' + _sco.signature)
+        if (_http) return _http[0]
+    } catch (error) {
+        
     }
 }
 

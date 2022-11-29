@@ -13,18 +13,18 @@ const signatureOrder = (symbol, position, quantity, priceMark) => {
     // Calculate TP/SL
     if (position == 'BUY') {
         _mark = Math.floor(priceMark).toFixed(2)
-        _stopPriceTP = ((parseFloat(_mark) / 100) * 1.51) + parseFloat(_mark)
+        _stopPriceTP = ((parseFloat(_mark) / 100) * 1.11) + parseFloat(_mark)
         _stopPriceSL = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.01)
     }
     if (position == 'SELL') {
         _mark = Math.round(priceMark).toFixed(2)
-        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.51)
+        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.11)
         _stopPriceSL = ((parseFloat(_mark) / 100) * 1.01) + parseFloat(_mark)
     }
     // Order
     _o = {
         type: 'LIMIT',
-        symbol: symbol,
+        symbol: symbol.toUpperCase(),
         side: position,
         quantity: quantity,
         price: _mark,
@@ -34,7 +34,7 @@ const signatureOrder = (symbol, position, quantity, priceMark) => {
     // Stop Loss
     _sl = {
         type: 'STOP_MARKET',
-        symbol: symbol,
+        symbol: symbol.toUpperCase(),
         side: position == 'BUY' ? 'SELL' : 'BUY',
         quantity: quantity,
         stopPrice: _stopPriceSL.toFixed(2),
@@ -44,7 +44,7 @@ const signatureOrder = (symbol, position, quantity, priceMark) => {
     // Take Profit
     _tp = {
         type: 'TAKE_PROFIT_MARKET',
-        symbol: symbol,
+        symbol: symbol.toUpperCase(),
         side: position == 'BUY' ? 'SELL' : 'BUY',
         quantity: quantity,
         stopPrice: _stopPriceTP.toFixed(2),

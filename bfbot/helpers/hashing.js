@@ -13,13 +13,13 @@ const signatureOrder = (symbol, position, quantity, priceMark) => {
     // Calculate TP/SL
     if (position == 'BUY') {
         _mark = Math.floor(priceMark).toFixed(2)
-        _stopPriceTP = ((parseFloat(_mark) / 100) * 1.11) + parseFloat(_mark)
-        _stopPriceSL = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.01)
+        _stopPriceTP = ((parseFloat(_mark) / 100) * 0.63) + parseFloat(_mark)
+        _stopPriceSL = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 0.53)
     }
     if (position == 'SELL') {
         _mark = Math.round(priceMark).toFixed(2)
-        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 1.11)
-        _stopPriceSL = ((parseFloat(_mark) / 100) * 1.01) + parseFloat(_mark)
+        _stopPriceTP = parseFloat(_mark) - ((parseFloat(_mark) / 100) * 0.63)
+        _stopPriceSL = ((parseFloat(_mark) / 100) * 0.53) + parseFloat(_mark)
     }
     // Order
     _o = {

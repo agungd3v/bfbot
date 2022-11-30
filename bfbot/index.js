@@ -23,7 +23,7 @@ setInterval(() => {
     console.log('Starting open...')
     _a = require('./services/order')
     _a.preOrder('btcusdt', null)
-}, 5 * 60 * 1000)
+}, 7 * 60 * 1000)
 
 http.listen(process.env.APP_PORT || 3000, function() {
    console.log('listening on *:3000')

@@ -9,12 +9,12 @@ const newOrder = async (params) => {
         if (_gi) {
             _gimc = 0
             if (params.side == 'BUY') {
-                _gimc = params.price - ((Math.floor(_gi.markPrice) / 100) * 0.5)
+                _gimc = params.price - ((Math.floor(_gi.markPrice) / 100) * 0.29)
             }
             if (params.side == 'SELL') {
-                _gimc = params.price + ((Math.round(_gi.markPrice) / 100) * 0.5)
+                _gimc = params.price + ((Math.round(_gi.markPrice) / 100) * 0.29)
             }
-            _cso = signatureOrder(params.pair, params.side, '0.04', _gimc)
+            _cso = signatureOrder(params.pair, params.side, '0.09', _gimc)
             _h = await http.post('/v1/batchOrders?' + _cso.query + '&signature=' + _cso.signature)
             if (_h) {
                 console.log('New Order Created!')
@@ -119,6 +119,8 @@ module.exports = {
                         cancelOrders(_symbol)
                         return getAggregateTrade(_symbol)
                     }
+                } else {
+                    console.log('Nothing to open...')
                 }
             }
         }

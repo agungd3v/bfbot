@@ -112,13 +112,8 @@ module.exports = {
                     return getAggregateTrade(_symbol)
                 }
                 if (_opn.entryPrice == '0.0') {
-                    if (_aol.length == 0) {
-                        return getAggregateTrade(_symbol)
-                    }
-                    if (_oos.length >= 1 && _aol.length == 0) {
-                        cancelOrders(_symbol)
-                        return getAggregateTrade(_symbol)
-                    }
+                    cancelOrders(_symbol)
+                    return getAggregateTrade(_symbol)
                 } else {
                     console.log('Nothing to open...')
                 }

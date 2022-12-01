@@ -115,7 +115,7 @@ module.exports = {
                     if (_aol.length == 0) {
                         return getAggregateTrade(_symbol)
                     }
-                    if (_aol.length > 1) {
+                    if (_oos.length >= 1 && _aol.length == 0) {
                         cancelOrders(_symbol)
                         return getAggregateTrade(_symbol)
                     }

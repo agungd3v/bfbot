@@ -20,11 +20,14 @@ io.on('connection', function(socket) {
 })
 
 setInterval(() => {
-    console.log('Starting open...')
-    _a = require('./services/order')
-    _a.preOrder('btcusdt', null)
+    // console.log('Starting open...')
+    // _a = require('./services/order')
+    // _a.preOrder('btcusdt', null)
 }, 7 * 60 * 1000)
 
 http.listen(process.env.APP_PORT || 3000, function() {
-   console.log('listening on *:3000')
+    console.log('listening on *:3000')
+    console.log('Starting open...')
+    _a = require('./services/order')
+    _a.preOrder('btcusdt', null)
 })
